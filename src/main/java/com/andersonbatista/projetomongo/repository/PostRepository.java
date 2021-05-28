@@ -10,13 +10,16 @@ import org.springframework.stereotype.Repository;
 import com.andersonbatista.projetomongo.domain.Post;
 
 @Repository
-public interface PostRepository extends MongoRepository<Post, String>{
+public interface PostRepository extends MongoRepository<Post, String>{	
 	
+	// montando consultas com QueryMethods
+	List<Post> findByTitleContainingIgnoreCase(String text);// consulta simples
+	
+	// Consulta com regex Query methods
 	@Query("{ 'title': { $regex: ?0, $options: 'i' } }")
 	List<Post> searchTitle(String text);
 	
-	List<Post> findByTitleContainingIgnoreCase(String text); // montando consultas com QueryMethods
-	
-	@Query("{ $and: [ { date: { $gte: ?1} }, { date: { $lte: ?2}}, { $or: [ { 'title': { $regex: ?0, $options: 'i' } }, { 'body': { $regex: ?0, $options: 'i' } }, { 'comments.text': { $regex: ?0, $options: 'i' } } ] } ] }")
+	@Query("{ $and: [ { date: { $gte: ?1} }, { date: { $lte: ?2}}, { $or: [ { 'title': { $regex: ?0, $options: 'i' } }, "
+			+ "{ 'body': { $regex: ?0, $options: 'i' } }, { 'comments.text': { $regex: ?0, $options: 'i' } } ] } ] }")
 	List<Post> fullSearch(String text, Date minDate, Date maxDate);
 }
